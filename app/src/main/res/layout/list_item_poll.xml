@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_margin_extra_small">
+
+    <TextView
+        android:id="@+id/tvPollTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Favourite Sport"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/text_size_extra_large"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/tvPollQuestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_margin_extra_small"
+        android:text="What is your favourite sport?"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/text_size_medium"/>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_margin_small">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/llResults"
+            android:alpha="0.5">
+            <View
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/activity_margin_small"
+                android:layout_marginStart="@dimen/activity_margin_small"
+                android:background="@drawable/bg_dot"/>
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_pie_chart"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/activity_margin_extra_small"
+                android:text="Results"
+                android:textColor="@color/primary_text"
+                android:textSize="@dimen/text_size_small"/>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:text="12 Jan at 12:09"
+            android:textStyle="bold"
+            android:textColor="@color/secondary_text"
+            android:textSize="@dimen/text_size_extra_small"/>
+    </RelativeLayout>
+</LinearLayout>

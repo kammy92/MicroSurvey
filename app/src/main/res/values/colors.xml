@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#008577</color>
+    <color name="primary_dark">#00574B</color>
+    <color name="accent">#006400</color>
+
+    <color name="primary_text">#272b3d</color>
+    <color name="secondary_text">#8a8c96</color>
+    <color name="tertiary_text">#eeeeee</color>
+
+    <color name="app_background">#ffffff</color>
+
+
+    <color name="text_color_blue">#0097A7</color>
+
+    <color name="text_color_grey_light">#eeeeee</color>
+    <color name="text_color_white">#eeeeee</color>
+    <color name="color_divider">#BBBBBB</color>
+
+    <color name="progress_dialog_background">#ffffff</color>
+
+    <color name="hint_text_color">#9e9e9e</color>
+</resources>
