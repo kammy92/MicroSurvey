@@ -17,7 +17,7 @@ public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration {
     private Drawable mDivider;
     
     public SimpleDividerItemDecoration (Context context, @IntRange(from = 0) int margin_top, @IntRange(from = 0) int margin_bottom, @IntRange(from = 0) int margin_right, @IntRange(from = 0) int margin_left) {
-        mDivider = context.getResources ().getDrawable (R.drawable.dotted_line);
+        mDivider = context.getResources ().getDrawable (R.drawable.line_divider);
         this.margin_top = margin_top;
         this.margin_bottom = margin_bottom;
         this.margin_left = margin_left;

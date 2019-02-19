@@ -35,7 +35,7 @@ import com.resultier.crux.utils.AppConfigTags;
 import com.resultier.crux.utils.AppConfigURL;
 import com.resultier.crux.utils.AppDetailsPref;
 import com.resultier.crux.utils.Constants;
-import com.resultier.crux.utils.DividerItemDecoration;
+import com.resultier.crux.utils.DashDivider;
 import com.resultier.crux.utils.NetworkConnection;
 import com.resultier.crux.utils.RecyclerViewMargin;
 import com.resultier.crux.utils.UserDetailsPref;
@@ -90,8 +90,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rvPolls.setLayoutManager (new LinearLayoutManager (this, LinearLayoutManager.VERTICAL, false));
         rvPolls.setItemAnimator (new DefaultItemAnimator ());
         rvPolls.addItemDecoration (new RecyclerViewMargin (this, (int) Utils.pxFromDp (this, 16), (int) Utils.pxFromDp (this, 16), (int) Utils.pxFromDp (this, 16), (int) Utils.pxFromDp (this, 16), 1, 0, RecyclerViewMargin.LAYOUT_MANAGER_LINEAR, RecyclerViewMargin.ORIENTATION_VERTICAL));
-        rvPolls.addItemDecoration (new DividerItemDecoration (ContextCompat.getDrawable (this, R.drawable.dotted_line)));
+//        rvPolls.addItemDecoration (new DividerItemDecoration (ContextCompat.getDrawable (this, R.drawable.line_divider)));
 //        rvPolls.addItemDecoration (new SimpleDividerItemDecoration (this, (int) Utils.pxFromDp (this, 16), (int) Utils.pxFromDp (this, 16), (int) Utils.pxFromDp (this, 16), (int) Utils.pxFromDp (this, 16)));
+    
+        RecyclerView.ItemDecoration dashDivider = new DashDivider.Builder (this)
+                .dashGap (5)
+                .dashLength (5)
+                .dashThickness (3)
+                .color (ContextCompat.getColor (this, R.color.colorPrimary))
+                .orientation (LinearLayoutManager.VERTICAL)
+                .build ();
+        rvPolls.addItemDecoration (dashDivider);
+        
         
     }
     
