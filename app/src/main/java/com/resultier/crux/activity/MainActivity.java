@@ -28,9 +28,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.resultier.crux.R;
-import com.resultier.crux.adapter.PollAdapter;
+import com.resultier.crux.adapter.SurveyAdapter;
 import com.resultier.crux.listeners.OnItemClickListener;
-import com.resultier.crux.models.Poll;
+import com.resultier.crux.models.Survey;
 import com.resultier.crux.utils.AppConfigTags;
 import com.resultier.crux.utils.AppConfigURL;
 import com.resultier.crux.utils.AppDetailsPref;
@@ -64,17 +64,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RelativeLayout rlNoInternet;
     private RelativeLayout rlLoading;
     
-    private ArrayList<Poll> pollList = new ArrayList<> ();
-    PollAdapter pollAdapter;
-    
+    SurveyAdapter surveyAdapter;
+    private ArrayList<Survey> surveyList = new ArrayList<> ();
     
     @Override
     protected void onCreate (@Nullable Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_main);
         initView ();
-        initListeners ();
         initData ();
+        initListeners ();
         isLogin ();
         getPollList ();
     }
@@ -84,8 +83,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         appDetailsPref = AppDetailsPref.getInstance ();
         Utils.setTypefaceToAllViews (this, clMain);
         swipeRefreshLayout.setColorSchemeColors (getResources ().getColor (R.color.primary_dark));
-        pollAdapter = new PollAdapter (this, pollList);
-        rvPolls.setAdapter (pollAdapter);
+        surveyAdapter = new SurveyAdapter (this, surveyList);
+        rvPolls.setAdapter (surveyAdapter);
         rvPolls.setHasFixedSize (true);
         rvPolls.setLayoutManager (new LinearLayoutManager (this, LinearLayoutManager.VERTICAL, false));
         rvPolls.setItemAnimator (new DefaultItemAnimator ());
@@ -93,15 +92,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        rvPolls.addItemDecoration (new DividerItemDecoration (ContextCompat.getDrawable (this, R.drawable.line_divider)));
 //        rvPolls.addItemDecoration (new SimpleDividerItemDecoration (this, (int) Utils.pxFromDp (this, 16), (int) Utils.pxFromDp (this, 16), (int) Utils.pxFromDp (this, 16), (int) Utils.pxFromDp (this, 16)));
     
-        RecyclerView.ItemDecoration dashDivider = new DashDivider.Builder (this)
+        rvPolls.addItemDecoration (new DashDivider.Builder (this)
                 .dashGap (5)
-                .dashLength (5)
+                .dashLength (15)
                 .dashThickness (3)
-                .color (ContextCompat.getColor (this, R.color.colorPrimary))
+                .color (ContextCompat.getColor (this, R.color.primary))
                 .orientation (LinearLayoutManager.VERTICAL)
-                .build ();
-        rvPolls.addItemDecoration (dashDivider);
-        
+                .marginTop ((int) Utils.pxFromDp (this, 16))
+                .marginBottom ((int) Utils.pxFromDp (this, 16))
+                .marginLeft ((int) Utils.pxFromDp (this, 16))
+                .marginRight ((int) Utils.pxFromDp (this, 16))
+                .build ());
         
     }
     
@@ -126,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 swipeRefreshLayout.setRefreshing (false);
             }
         });
-//        pollAdapter.setOnItemClickListener (this);
+        surveyAdapter.setOnItemClickListener (this);
     }
     
     public void isLogin () {
@@ -167,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         new Handler ().postDelayed (new Runnable () {
             @Override
             public void run () {
-                if (pollList.size () > 0) {
+                if (surveyList.size () > 0) {
                     rlMain.setVisibility (View.VISIBLE);
                 } else {
                     rlNoResultFound.setVisibility (View.VISIBLE);
@@ -193,19 +194,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     String message = jsonObj.getString (AppConfigTags.MESSAGE);
                                     if (! is_error) {
                                         appDetailsPref.putStringPref (MainActivity.this, AppDetailsPref.POLLS, response);
-                                        JSONArray jsonArray = jsonObj.getJSONArray (AppConfigTags.POLLS);
-                                        pollList.clear ();
+                                        JSONArray jsonArray = jsonObj.getJSONArray (AppConfigTags.SURVEYS);
+                                        surveyList.clear ();
                                         for (int i = 0; i < jsonArray.length (); i++) {
                                             JSONObject jsonObject = jsonArray.getJSONObject (i);
-                                            pollList.add (new Poll (i, 1, "Title " + i, "Question " + i, "2019-02-03 12:12:12"));
+                                            surveyList.add (new Survey (i, 1, "Title " + i, "Question " + i, "2019-02-03 12:12:12"));
                                         }
-                                        
-                                        if (pollList.size () > 0) {
+    
+                                        if (surveyList.size () > 0) {
                                             rlNoResultFound.setVisibility (View.GONE);
                                         } else {
                                             rlNoResultFound.setVisibility (View.VISIBLE);
                                         }
-                                        pollAdapter.notifyDataSetChanged ();
+                                        surveyAdapter.notifyDataSetChanged ();
                                     } else {
                                         if (! showOfflineData ()) {
                                             Utils.showSnackBar (MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
@@ -310,20 +311,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     rlNoInternet.setVisibility (View.GONE);
                     rlNoResultFound.setVisibility (View.GONE);
                     rlLoading.setVisibility (View.GONE);
-                    JSONArray jsonArray = jsonObj.getJSONArray (AppConfigTags.POLLS);
-                    pollList.clear ();
+                    JSONArray jsonArray = jsonObj.getJSONArray (AppConfigTags.SURVEYS);
+                    surveyList.clear ();
                     for (int i = 0; i < jsonArray.length (); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject (i);
-                        pollList.add (new Poll (i, 1, "Title " + i, "Question " + i, "2019-02-03 12:12:12"));
+                        surveyList.add (new Survey (i, 0, "Title " + i, "Question " + i, "2019-02-03 12:12:12"));
                     }
-                    if (pollList.size () > 0) {
+                    if (surveyList.size () > 0) {
                         rlMain.setVisibility (View.VISIBLE);
                         rlNoResultFound.setVisibility (View.GONE);
                     } else {
                         rlMain.setVisibility (View.GONE);
                         rlNoResultFound.setVisibility (View.VISIBLE);
                     }
-                    pollAdapter.notifyDataSetChanged ();
+                    surveyAdapter.notifyDataSetChanged ();
                 } else {
                     Utils.showSnackBar (MainActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
                 }
@@ -338,6 +339,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     
     @Override
     public void onItemClick (View view, int position) {
-    
+        Survey survey = surveyList.get (position);
+        Intent intent = new Intent (MainActivity.this, SurveyActivity.class);
+        intent.putExtra (AppConfigTags.SURVEY_ID, survey.getSurvey_id ());
+        intent.putExtra (AppConfigTags.SURVEY_TITLE, survey.getSurvey_title ());
+        overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);
+        startActivity (intent);
     }
 }

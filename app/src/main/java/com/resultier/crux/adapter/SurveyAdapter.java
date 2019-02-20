@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.github.marlonlom.utilities.timeago.TimeAgo;
 import com.resultier.crux.R;
 import com.resultier.crux.listeners.OnItemClickListener;
-import com.resultier.crux.models.Poll;
+import com.resultier.crux.models.Survey;
 import com.resultier.crux.utils.Utils;
 
 import java.text.ParseException;
@@ -20,13 +20,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class PollAdapter extends RecyclerView.Adapter<PollAdapter.ViewHolder> {
+public class SurveyAdapter extends RecyclerView.Adapter<SurveyAdapter.ViewHolder> {
     private OnItemClickListener mItemClickListener;
-    private ArrayList<Poll> pollList;
+    private ArrayList<Survey> surveyList;
     private Activity activity;
     
-    public PollAdapter (Activity activity, ArrayList<Poll> pollList) {
-        this.pollList = pollList;
+    public SurveyAdapter (Activity activity, ArrayList<Survey> surveyList) {
+        this.surveyList = surveyList;
         this.activity = activity;
     }
     
@@ -39,20 +39,20 @@ public class PollAdapter extends RecyclerView.Adapter<PollAdapter.ViewHolder> {
     
     @Override
     public void onBindViewHolder (@NonNull ViewHolder holder, int position) {
-        Poll poll = pollList.get (position);
+        Survey survey = surveyList.get (position);
         Utils.setTypefaceToAllViews (activity, holder.tvPollQuestion);
-        holder.tvPollTitle.setText (poll.getPoll_title ());
-        holder.tvPollQuestion.setText (poll.getPoll_question ());
+        holder.tvPollTitle.setText (survey.getSurvey_title ());
+        holder.tvPollQuestion.setText (survey.getSurvey_question ());
         
         SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
         try {
-            Date mDate = sdf.parse (poll.getPoll_date ());
-            holder.tvTime.setText ("" + TimeAgo.using (mDate.getTime ()) + " at " + Utils.convertTimeFormat (poll.getPoll_date (), "yyyy-MM-dd HH:mm:ss", "HH:mm"));
+            Date mDate = sdf.parse (survey.getSurvey_date ());
+            holder.tvTime.setText ("" + TimeAgo.using (mDate.getTime ()) + " at " + Utils.convertTimeFormat (survey.getSurvey_date (), "yyyy-MM-dd HH:mm:ss", "HH:mm"));
         } catch (ParseException e) {
             e.printStackTrace ();
         }
-        
-        switch (poll.getPoll_status ()) {
+    
+        switch (survey.getSurvey_status ()) {
             case 0:
                 holder.llResults.setAlpha (0.5f);
                 break;
@@ -68,7 +68,7 @@ public class PollAdapter extends RecyclerView.Adapter<PollAdapter.ViewHolder> {
     
     @Override
     public int getItemCount () {
-        return pollList.size ();
+        return surveyList.size ();
     }
     
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

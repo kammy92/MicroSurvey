@@ -6,7 +6,8 @@ public class AppConfigURL {
     private static String BASE_URL = "https://project-ncrapp-cammy92.c9users.io/api/" + version + "/";
     
     public static String LOGIN = BASE_URL + "app/login";
-    public static String GET_POLLS= BASE_URL + "app/tickets/recent";
+    public static String GET_POLLS = BASE_URL + "app/tickets/recent";
+    public static String GET_SURVEY_DETAIL = "https://factory-app-cammy92.c9users.io/test2.php";//BASE_URL + "app/tickets/recent";
     public static String FORGOT_PASSWORD = BASE_URL + "app/forgot-password";
 }
 
