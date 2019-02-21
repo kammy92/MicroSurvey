@@ -162,16 +162,13 @@ public class SurveyActivity extends AppCompatActivity {
                                             question.setType (jsonObject.getString (AppConfigTags.QUESTION_TYPE));
                                             question.setValidation (jsonObject.getBoolean (AppConfigTags.VALIDATION));
                                             
-                                            
                                             JSONArray jsonArray2 = jsonObject.getJSONArray (AppConfigTags.OPTIONS);
                                             ArrayList<Option> options = new ArrayList<> ();
                                             for (int j = 0; j < jsonArray2.length (); j++) {
                                                 JSONObject jsonObject1 = jsonArray2.getJSONObject (j);
-                                                Option option = new Option (
+                                                options.add (new Option (
                                                         jsonObject1.getInt (AppConfigTags.OPTION_ID),
-                                                        jsonObject1.getString (AppConfigTags.OPTION_VALUE),
-                                                        jsonObject1.getString (AppConfigTags.OPTION_TEXT));
-                                                options.add (option);
+                                                        jsonObject1.getString (AppConfigTags.OPTION_VALUE)));
                                             }
                                             question.setOptions (options);
                                             questionList.add (question);

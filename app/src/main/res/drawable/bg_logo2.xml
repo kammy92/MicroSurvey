@@ -4,5 +4,4 @@
     <corners android:radius="@dimen/activity_margin"/>
     <stroke android:width="2dp"
             android:color="@color/color_divider"/>
-    <solid android:color="@color/app_background"/>
 </shape>

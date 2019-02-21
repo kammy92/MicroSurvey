@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NCR App</string>
+    <string name="app_name">MicroSurvey by Crux</string>
     <string name="user_id">User Id</string>
     <string name="password">Password</string>
     <string name="forgot_password">Forgot Password?</string>

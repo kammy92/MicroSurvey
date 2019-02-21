@@ -179,7 +179,7 @@ public class AppConfigTags {
     public static final String NOTIFICATION_LINES = "lines";
     
     
-    public static final String SURVEYS = "tickets";
+    public static final String SURVEYS = "surveys";
     public static final String SURVEY_ID = "survey_id";
     public static final String SURVEY_TITLE = "survey_title";
     public static final String SURVEY_QUESTION = "survey_question";
@@ -196,10 +196,11 @@ public class AppConfigTags {
     public static final String OPTIONS = "options";
     public static final String OPTION_ID = "option_id";
     public static final String OPTION_VALUE = "option_value";
-    public static final String OPTION_TEXT = "option_text";
     
     
     public static final String TYPE_INPUT = "TYPE_INPUT";
     public static final String TYPE_RADIO = "TYPE_RADIO";
     public static final String TYPE_CHECKBOX = "TYPE_CHECKBOX";
+    public static final String TYPE_RATING = "TYPE_RATING";
+    public static final String TYPE_SLIDER = "TYPE_SLIDER";
 }

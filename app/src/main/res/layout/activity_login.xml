@@ -123,7 +123,7 @@
                 android:layout_width="102dp"
                 android:layout_height="102dp"
                 android:layout_centerInParent="true"
-                android:background="@drawable/bg_logo"/>
+                android:background="@drawable/bg_logo2"/>
         </RelativeLayout>
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

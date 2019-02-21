@@ -198,9 +198,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         surveyList.clear ();
                                         for (int i = 0; i < jsonArray.length (); i++) {
                                             JSONObject jsonObject = jsonArray.getJSONObject (i);
-                                            surveyList.add (new Survey (i, 1, "Title " + i, "Question " + i, "2019-02-03 12:12:12"));
+                                            surveyList.add (new Survey (
+                                                    jsonObject.getInt (AppConfigTags.SURVEY_ID),
+                                                    jsonObject.getInt (AppConfigTags.SURVEY_STATUS),
+                                                    jsonObject.getString (AppConfigTags.SURVEY_TITLE),
+                                                    jsonObject.getString (AppConfigTags.SURVEY_QUESTION),
+                                                    jsonObject.getString (AppConfigTags.SURVEY_DATE)));
                                         }
-    
                                         if (surveyList.size () > 0) {
                                             rlNoResultFound.setVisibility (View.GONE);
                                         } else {
@@ -308,6 +312,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 boolean is_error = jsonObj.getBoolean (AppConfigTags.ERROR);
                 String message = jsonObj.getString (AppConfigTags.MESSAGE);
                 if (! is_error) {
+                    appDetailsPref.putStringPref (MainActivity.this, AppDetailsPref.POLLS, response);
+                    JSONArray jsonArray = jsonObj.getJSONArray (AppConfigTags.SURVEYS);
+                    surveyList.clear ();
+                    for (int i = 0; i < jsonArray.length (); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject (i);
+                        surveyList.add (new Survey (
+                                jsonObject.getInt (AppConfigTags.SURVEY_ID),
+                                jsonObject.getInt (AppConfigTags.SURVEY_STATUS),
+                                jsonObject.getString (AppConfigTags.SURVEY_TITLE),
+                                jsonObject.getString (AppConfigTags.SURVEY_QUESTION),
+                                jsonObject.getString (AppConfigTags.SURVEY_DATE)));
+                    }
+                    if (surveyList.size () > 0) {
+                        rlNoResultFound.setVisibility (View.GONE);
+                    } else {
+                        rlNoResultFound.setVisibility (View.VISIBLE);
+                    }
+                    surveyAdapter.notifyDataSetChanged ();
+                }
+            } catch (Exception e) {
+                e.printStackTrace ();
+            }
+            stopLoading ();
+            return true;
+        } else {
+            stopLoading ();
+            return false;
+        }
+        
+        /*
+        if (response != null) {
+            try {
+                JSONObject jsonObj = new JSONObject (response);
+                boolean is_error = jsonObj.getBoolean (AppConfigTags.ERROR);
+                String message = jsonObj.getString (AppConfigTags.MESSAGE);
+                if (! is_error) {
                     rlNoInternet.setVisibility (View.GONE);
                     rlNoResultFound.setVisibility (View.GONE);
                     rlLoading.setVisibility (View.GONE);
@@ -315,7 +355,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     surveyList.clear ();
                     for (int i = 0; i < jsonArray.length (); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject (i);
-                        surveyList.add (new Survey (i, 0, "Title " + i, "Question " + i, "2019-02-03 12:12:12"));
+                        surveyList.add (new Survey (i, 0, "Title " + i, "Question " + i, "2019-02-13 12:12:12"));
                     }
                     if (surveyList.size () > 0) {
                         rlMain.setVisibility (View.VISIBLE);
@@ -335,6 +375,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             return false;
         }
+        */
     }
     
     @Override

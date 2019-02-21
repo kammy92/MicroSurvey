@@ -52,10 +52,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="?attr/actionBarSize"
                     android:layout_centerInParent="true"
-                    android:padding="@dimen/activity_margin_small"
                     android:layout_marginStart="?attr/actionBarSize"
                     android:layout_marginEnd="?attr/actionBarSize"
-                    android:src="@drawable/crux"/>
+                    android:src="@drawable/crux_logo"/>
                 <ImageView
                     android:id="@+id/ivRefresh"
                     android:layout_width="?attr/actionBarSize"
