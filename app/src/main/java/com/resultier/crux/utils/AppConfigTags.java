@@ -41,8 +41,8 @@ public class AppConfigTags {
     public static final String TICKET_ID = "ticket_id";
     public static final String TICKET_NUMBER= "ticket_number";
     public static final String TICKET_STATUS="ticket_status";
-    public static final String USERNAME = "username";
-    public static final String PASSWORD = "password";
+    public static final String LOGIN_USERNAME = "login_username";
+    public static final String LOGIN_PASSWORD = "login_password";
     public static final String USER_ID = "user_id";;
     public static final String USER_STATUS = "user_status";
     public static final String USER_LOGIN_ID = "user_login_id";

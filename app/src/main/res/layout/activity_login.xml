@@ -44,7 +44,7 @@
                 android:layout_marginBottom="@dimen/activity_margin_small"
                 android:background="@drawable/bg_edittext_underline"
                 android:inputType="text"
-                android:text="1555"
+                android:text=""
                 android:textColor="@color/primary_text"
                 android:textSize="@dimen/text_size_small"/>
             <TextView
@@ -65,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_edittext_underline"
                     android:inputType="textPassword"
-                    android:text="sumit"
+                    android:text=""
                     android:textColor="@color/primary_text"
                     android:textSize="@dimen/text_size_small"/>
                 <TextView

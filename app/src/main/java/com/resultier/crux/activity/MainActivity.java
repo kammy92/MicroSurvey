@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (NetworkConnection.isNetworkAvailable (MainActivity.this)) {
             startLoading ();
             Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.GET_POLLS, true);
-            StringRequest strRequest = new StringRequest (Request.Method.GET, AppConfigURL.GET_POLLS,
+            StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.GET_POLLS,
                     new Response.Listener<String> () {
                         @Override
                         public void onResponse (String response) {
@@ -249,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 protected Map<String, String> getParams () throws AuthFailureError {
                     Map<String, String> params = new Hashtable<String, String> ();
+                    params.put (AppConfigTags.USER_ID, String.valueOf (userDetailsPref.getIntPref (MainActivity.this, UserDetailsPref.USER_ID)));
                     Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
                     return params;
                 }
@@ -256,30 +257,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public Map<String, String> getHeaders () throws AuthFailureError {
                     Map<String, String> params = new HashMap<> ();
-                    AppDetailsPref appDetailsPref = AppDetailsPref.getInstance ();
                     params.put (AppConfigTags.HEADER_API_KEY, Constants.api_key);
-                    params.put (AppConfigTags.HEADER_USER_LOGIN_ID, "1555");
-//                    params.put (AppConfigTags.HEADER_AUTHORIZATION, "Basic " + appDetailsPref.getStringPref (MainActivity.this, AppDetailsPref.USER_TOKEN));
                     Utils.showLog (Log.INFO, AppConfigTags.HEADERS_SENT_TO_THE_SERVER, "" + params, false);
                     return params;
-                }
-                
-                @Override
-                public byte[] getBody () throws AuthFailureError {
-//                    JSONObject jsonObject = new JSONObject ();
-//                    try {
-//                        jsonObject.put (AppConfigTags.USERNAME, username);
-//                        jsonObject.put (AppConfigTags.PASSWORD, password);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace ();
-//                    }
-                    String str = "";
-                    Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, str, true);
-                    return str.getBytes ();
-                }
-                
-                public String getBodyContentType () {
-                    return "application/json; charset=utf-8";
                 }
             };
             Utils.sendRequest (strRequest, 30);

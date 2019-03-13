@@ -34,6 +34,7 @@ import com.resultier.crux.utils.AppConfigURL;
 import com.resultier.crux.utils.AppDetailsPref;
 import com.resultier.crux.utils.Constants;
 import com.resultier.crux.utils.NetworkConnection;
+import com.resultier.crux.utils.UserDetailsPref;
 import com.resultier.crux.utils.Utils;
 
 import org.json.JSONArray;
@@ -50,6 +51,7 @@ public class SurveyActivity extends AppCompatActivity {
     CoordinatorLayout clMain;
     AppDetailsPref appDetailsPref;
     ProgressDialog progressDialog;
+    UserDetailsPref userDetailsPref;
     
     ArrayList<Question> questionList = new ArrayList<> ();
     
@@ -94,6 +96,7 @@ public class SurveyActivity extends AppCompatActivity {
     private void initData () {
         progressDialog = new ProgressDialog (this);
         appDetailsPref = AppDetailsPref.getInstance ();
+        userDetailsPref = UserDetailsPref.getInstance ();
         Utils.setTypefaceToAllViews (this, clMain);
         tvTitle.setText (survey_title);
         db = new DatabaseHandler (this);
@@ -134,7 +137,7 @@ public class SurveyActivity extends AppCompatActivity {
         if (NetworkConnection.isNetworkAvailable (SurveyActivity.this)) {
             Utils.showLog (Log.INFO, AppConfigTags.URL, AppConfigURL.GET_SURVEY_DETAIL, true);
             Utils.showProgressDialog (SurveyActivity.this, progressDialog, getResources ().getString (R.string.progress_dialog_text_please_wait), true);
-            StringRequest strRequest = new StringRequest (Request.Method.GET, AppConfigURL.GET_SURVEY_DETAIL,
+            StringRequest strRequest = new StringRequest (Request.Method.POST, AppConfigURL.GET_SURVEY_DETAIL,
                     new Response.Listener<String> () {
                         @Override
                         public void onResponse (String response) {
@@ -212,6 +215,8 @@ public class SurveyActivity extends AppCompatActivity {
                 @Override
                 protected Map<String, String> getParams () throws AuthFailureError {
                     Map<String, String> params = new Hashtable<String, String> ();
+                    params.put (AppConfigTags.USER_ID, String.valueOf (userDetailsPref.getIntPref (SurveyActivity.this, UserDetailsPref.USER_ID)));
+                    params.put (AppConfigTags.SURVEY_ID, String.valueOf (survey_id));
                     Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
                     return params;
                 }

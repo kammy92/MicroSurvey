@@ -173,12 +173,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
     
     private void sendLoginDetailsToServer (final String username, final String password) {
-        userDetailsPref.putIntPref (LoginActivity.this, UserDetailsPref.USER_ID, 1);
-        Intent intent = new Intent (LoginActivity.this, MainActivity.class);
-        startActivity (intent);
-        finish ();
-        overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);
-/*
+//        userDetailsPref.putIntPref (LoginActivity.this, UserDetailsPref.USER_ID, 1);
+//        Intent intent = new Intent (LoginActivity.this, MainActivity.class);
+//        startActivity (intent);
+//        finish ();
+//        overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);
+
         if (NetworkConnection.isNetworkAvailable (LoginActivity.this)) {
             Utils.showProgressDialog (LoginActivity.this, progressDialog, getResources ().getString (R.string.progress_dialog_text_please_wait), true);
             Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.LOGIN, true);
@@ -194,7 +194,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     String message = jsonObj.getString (AppConfigTags.MESSAGE);
                                     if (! error) {
                                         userDetailsPref.putIntPref (LoginActivity.this, UserDetailsPref.USER_ID, jsonObj.getInt (AppConfigTags.USER_ID));
-                                        userDetailsPref.putStringPref (LoginActivity.this, UserDetailsPref.USER_LOGIN_ID, jsonObj.getString (AppConfigTags.USER_LOGIN_ID));
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                         startActivity(intent);
                                         finish();
@@ -230,8 +229,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 protected Map<String, String> getParams () throws AuthFailureError {
                     Map<String, String> params = new Hashtable<String, String> ();
-                    params.put (AppConfigTags.USERNAME, username);
-                    params.put (AppConfigTags.PASSWORD, password);
+                    params.put (AppConfigTags.LOGIN_USERNAME, username);
+                    params.put (AppConfigTags.LOGIN_PASSWORD, password);
                     Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
                     return params;
                 }
@@ -255,7 +254,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             });
         }
-        */
+    
     }
     
     private void forgotPassword (final String username) {
@@ -305,7 +304,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 protected Map<String, String> getParams () throws AuthFailureError {
                     Map<String, String> params = new Hashtable<String, String> ();
-                    params.put (AppConfigTags.USERNAME, username);
+                    params.put (AppConfigTags.LOGIN_USERNAME, username);
                     Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
                     return params;
                 }
