@@ -200,6 +200,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             JSONObject jsonObject = jsonArray.getJSONObject (i);
                                             surveyList.add (new Survey (
                                                     jsonObject.getInt (AppConfigTags.SURVEY_ID),
+                                                    jsonObject.getInt (AppConfigTags.GROUP_ID),
+                                                    jsonObject.getInt (AppConfigTags.ASSIGNMENT_ID),
                                                     jsonObject.getInt (AppConfigTags.SURVEY_STATUS),
                                                     jsonObject.getString (AppConfigTags.SURVEY_TITLE),
                                                     jsonObject.getString (AppConfigTags.SURVEY_QUESTION),
@@ -299,6 +301,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         JSONObject jsonObject = jsonArray.getJSONObject (i);
                         surveyList.add (new Survey (
                                 jsonObject.getInt (AppConfigTags.SURVEY_ID),
+                                jsonObject.getInt (AppConfigTags.GROUP_ID),
+                                jsonObject.getInt (AppConfigTags.ASSIGNMENT_ID),
                                 jsonObject.getInt (AppConfigTags.SURVEY_STATUS),
                                 jsonObject.getString (AppConfigTags.SURVEY_TITLE),
                                 jsonObject.getString (AppConfigTags.SURVEY_QUESTION),
@@ -363,6 +367,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Survey survey = surveyList.get (position);
         Intent intent = new Intent (MainActivity.this, SurveyActivity.class);
         intent.putExtra (AppConfigTags.SURVEY_ID, survey.getSurvey_id ());
+        intent.putExtra (AppConfigTags.GROUP_ID, survey.getGroup_id ());
+        intent.putExtra (AppConfigTags.ASSIGNMENT_ID, survey.getAssignment_id ());
         intent.putExtra (AppConfigTags.SURVEY_TITLE, survey.getSurvey_title ());
         overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);
         startActivity (intent);

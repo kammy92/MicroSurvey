@@ -40,13 +40,17 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     ProgressDialog progressDialog;
     DatabaseHandler db;
     int survey_id = 0;
+    int group_id = 0;
+    int assignment_id = 0;
     private Activity activity;
     private ArrayList<Question> questionList = new ArrayList<> ();
     
-    public QuestionAdapter (Activity activity, ArrayList<Question> questionList, int survey_id) {
+    public QuestionAdapter (Activity activity, ArrayList<Question> questionList, int survey_id, int group_id, int assignment_id) {
         this.activity = activity;
         this.questionList = questionList;
         this.survey_id = survey_id;
+        this.group_id = group_id;
+        this.assignment_id = assignment_id;
         surveyActivity = (SurveyActivity) activity;
         db = new DatabaseHandler (activity);
     }
@@ -106,17 +110,17 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 holder1.setIsRecyclable (false);
                 Utils.setTypefaceToAllViews (activity, holder1.tvQuestion);
                 holder1.tvQuestion.setText (question.getText ());
-                if (db.isResponseExist (survey_id, question.getId ())) {
-                    holder1.etInput.setText (db.getResponseValue (survey_id, question.getId ()));
+                if (db.isResponseExist (survey_id, group_id, assignment_id, question.getId ())) {
+                    holder1.etInput.setText (db.getResponseValue (survey_id, group_id, assignment_id, question.getId ()));
                 }
                 holder1.etInput.setInputType (InputType.TYPE_CLASS_TEXT);
                 holder1.etInput.addTextChangedListener (new TextWatcher () {
                     @Override
                     public void onTextChanged (CharSequence s, int start, int before, int count) {
-                        if (db.isResponseExist (survey_id, question.getId ())) {
-                            db.updateResponse (survey_id, question.getId (), question.getType (), "", s.toString ());
+                        if (db.isResponseExist (survey_id, group_id, assignment_id, question.getId ())) {
+                            db.updateResponse (survey_id, group_id, assignment_id, question.getId (), question.getType (), "", s.toString ());
                         } else {
-                            db.insertResponse (survey_id, question.getId (), question.getType (), "", s.toString ());
+                            db.insertResponse (survey_id, group_id, assignment_id, question.getId (), question.getType (), "", s.toString ());
                         }
                     }
                     
@@ -136,8 +140,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 holder2.tvQuestion.setText (question.getText ());
                 holder2.rgOptions.removeAllViews ();
                 int option_id2 = 0;
-                if (db.isResponseExist (survey_id, question.getId ())) {
-                    option_id2 = Integer.parseInt (db.getResponseID (survey_id, question.getId ()));
+                if (db.isResponseExist (survey_id, group_id, assignment_id, question.getId ())) {
+                    option_id2 = Integer.parseInt (db.getResponseID (survey_id, group_id, assignment_id, question.getId ()));
                 }
                 
                 String selected_option = "";
@@ -163,10 +167,10 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     public void onCheckedChanged (RadioGroup group, int checkedId) {
                         RadioButton radioButton = (RadioButton) group.findViewById (checkedId);
                         String selected_option = radioButton.getText ().toString ();
-                        if (db.isResponseExist (survey_id, question.getId ())) {
-                            db.updateResponse (survey_id, question.getId (), question.getType (), String.valueOf (checkedId), selected_option);
+                        if (db.isResponseExist (survey_id, group_id, assignment_id, question.getId ())) {
+                            db.updateResponse (survey_id, group_id, assignment_id, question.getId (), question.getType (), String.valueOf (checkedId), selected_option);
                         } else {
-                            db.insertResponse (survey_id, question.getId (), question.getType (), String.valueOf (checkedId), selected_option);
+                            db.insertResponse (survey_id, group_id, assignment_id, question.getId (), question.getType (), String.valueOf (checkedId), selected_option);
                         }
                     }
                 });
@@ -179,9 +183,9 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     
                 String option_id3 = "";
                 String option_value3 = "";
-                if (db.isResponseExist (survey_id, question.getId ())) {
-                    option_id3 = db.getResponseID (survey_id, question.getId ());
-                    option_value3 = db.getResponseValue (survey_id, question.getId ());
+                if (db.isResponseExist (survey_id, group_id, assignment_id, question.getId ())) {
+                    option_id3 = db.getResponseID (survey_id, group_id, assignment_id, question.getId ());
+                    option_value3 = db.getResponseValue (survey_id, group_id, assignment_id, question.getId ());
                 }
     
                 String[] ops = option_id3.split (";;");
@@ -257,10 +261,10 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 }
                             }
     
-                            if (db.isResponseExist (survey_id, question.getId ())) {
-                                db.updateResponse (survey_id, question.getId (), question.getType (), str.toString (), str2.toString ());
+                            if (db.isResponseExist (survey_id, group_id, assignment_id, question.getId ())) {
+                                db.updateResponse (survey_id, group_id, assignment_id, question.getId (), question.getType (), str.toString (), str2.toString ());
                             } else {
-                                db.insertResponse (survey_id, question.getId (), question.getType (), str.toString (), str2.toString ());
+                                db.insertResponse (survey_id, group_id, assignment_id, question.getId (), question.getType (), str.toString (), str2.toString ());
                             }
                         }
                     });
@@ -271,17 +275,17 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 ViewHolder4 holder4 = (ViewHolder4) holder;
                 Utils.setTypefaceToAllViews (activity, holder4.tvQuestion);
                 holder4.tvQuestion.setText (question.getText ());
-                if (db.isResponseExist (survey_id, question.getId ())) {
-                    holder4.rbRating.setRating (Float.parseFloat (db.getResponseValue (survey_id, question.getId ())));
+                if (db.isResponseExist (survey_id, group_id, assignment_id, question.getId ())) {
+                    holder4.rbRating.setRating (Float.parseFloat (db.getResponseValue (survey_id, group_id, assignment_id, question.getId ())));
                 }
-        
+    
                 holder4.rbRating.setOnRatingBarChangeListener (new RatingBar.OnRatingBarChangeListener () {
                     @Override
                     public void onRatingChanged (RatingBar ratingBar, float rating, boolean fromUser) {
-                        if (db.isResponseExist (survey_id, question.getId ())) {
-                            db.updateResponse (survey_id, question.getId (), question.getType (), "", String.valueOf (rating));
+                        if (db.isResponseExist (survey_id, group_id, assignment_id, question.getId ())) {
+                            db.updateResponse (survey_id, group_id, assignment_id, question.getId (), question.getType (), "", String.valueOf (rating));
                         } else {
-                            db.insertResponse (survey_id, question.getId (), question.getType (), "", String.valueOf (rating));
+                            db.insertResponse (survey_id, group_id, assignment_id, question.getId (), question.getType (), "", String.valueOf (rating));
                         }
                     }
                 });
@@ -290,27 +294,27 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 ViewHolder5 holder5 = (ViewHolder5) holder;
                 Utils.setTypefaceToAllViews (activity, holder5.tvQuestion);
                 holder5.tvQuestion.setText (question.getText ());
-                if (db.isResponseExist (survey_id, question.getId ())) {
-                    holder5.seekBar.setProgress (Float.parseFloat (db.getResponseValue (survey_id, question.getId ())));
+                if (db.isResponseExist (survey_id, group_id, assignment_id, question.getId ())) {
+                    holder5.seekBar.setProgress (Float.parseFloat (db.getResponseValue (survey_id, group_id, assignment_id, question.getId ())));
                 }
-        
+    
                 holder5.seekBar.setOnSeekChangeListener (new OnSeekChangeListener () {
                     @Override
                     public void onSeeking (SeekParams seekParams) {
-                
+    
                     }
-            
+        
                     @Override
                     public void onStartTrackingTouch (IndicatorSeekBar seekBar) {
-                
-                    }
             
+                    }
+        
                     @Override
                     public void onStopTrackingTouch (IndicatorSeekBar seekBar) {
-                        if (db.isResponseExist (survey_id, question.getId ())) {
-                            db.updateResponse (survey_id, question.getId (), question.getType (), "", String.valueOf (seekBar.getProgress ()));
+                        if (db.isResponseExist (survey_id, group_id, assignment_id, question.getId ())) {
+                            db.updateResponse (survey_id, group_id, assignment_id, question.getId (), question.getType (), "", String.valueOf (seekBar.getProgress ()));
                         } else {
-                            db.insertResponse (survey_id, question.getId (), question.getType (), "", String.valueOf (seekBar.getProgress ()));
+                            db.insertResponse (survey_id, group_id, assignment_id, question.getId (), question.getType (), "", String.valueOf (seekBar.getProgress ()));
                         }
                     }
                 });

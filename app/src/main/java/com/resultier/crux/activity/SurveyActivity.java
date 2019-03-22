@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -34,6 +37,7 @@ import com.resultier.crux.utils.AppConfigURL;
 import com.resultier.crux.utils.AppDetailsPref;
 import com.resultier.crux.utils.Constants;
 import com.resultier.crux.utils.NetworkConnection;
+import com.resultier.crux.utils.SetTypeFace;
 import com.resultier.crux.utils.UserDetailsPref;
 import com.resultier.crux.utils.Utils;
 
@@ -62,6 +66,8 @@ public class SurveyActivity extends AppCompatActivity {
     
     String survey_title = "";
     int survey_id = 0;
+    int group_id = 0;
+    int assignment_id = 0;
     
     DatabaseHandler db;
     
@@ -82,6 +88,8 @@ public class SurveyActivity extends AppCompatActivity {
     private void initExtras () {
         Intent mIntent = getIntent ();
         survey_id = mIntent.getIntExtra (AppConfigTags.SURVEY_ID, 0);
+        group_id = mIntent.getIntExtra (AppConfigTags.GROUP_ID, 0);
+        assignment_id = mIntent.getIntExtra (AppConfigTags.ASSIGNMENT_ID, 0);
         survey_title = mIntent.getStringExtra (AppConfigTags.SURVEY_TITLE);
     }
     
@@ -103,7 +111,7 @@ public class SurveyActivity extends AppCompatActivity {
     }
     
     private void initAdapter () {
-        questionAdapter = new QuestionAdapter (this, questionList, survey_id);
+        questionAdapter = new QuestionAdapter (this, questionList, survey_id, group_id, assignment_id);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager (SurveyActivity.this, OrientationHelper.VERTICAL, false);
         rvSurvey.setLayoutManager (linearLayoutManager);
         rvSurvey.setItemAnimator (new DefaultItemAnimator ());
@@ -114,7 +122,7 @@ public class SurveyActivity extends AppCompatActivity {
         ivSave.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick (View view) {
-//                submitResponsesToServer (true);
+                submitResponsesToServer ();
             }
         });
         
@@ -224,7 +232,6 @@ public class SurveyActivity extends AppCompatActivity {
                 @Override
                 public Map<String, String> getHeaders () throws AuthFailureError {
                     Map<String, String> params = new HashMap<> ();
-                    AppDetailsPref appDetailsPref = AppDetailsPref.getInstance ();
                     params.put (AppConfigTags.HEADER_API_KEY, Constants.api_key);
                     Utils.showLog (Log.INFO, AppConfigTags.HEADERS_SENT_TO_THE_SERVER, "" + params, false);
                     return params;
@@ -251,187 +258,161 @@ public class SurveyActivity extends AppCompatActivity {
         overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
     }
     
-    /*
-        private void submitResponsesToServer (final boolean submitted) {
-            if (NetworkConnection.isNetworkAvailable (SurveyActivity.this)) {
-                Utils.showProgressDialog (SurveyActivity.this, progressDialog, getResources ().getString (R.string.progress_dialog_text_please_wait), true);
-                Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.SUBMIT_RESPONSES, true);
-                StringRequest strRequest1 = new StringRequest (Request.Method.POST, AppConfigURL.SUBMIT_RESPONSES,
-                        new Response.Listener<String> () {
-                            @Override
-                            public void onResponse (String response) {
-                                Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
-                                if (response != null) {
-                                    try {
-                                        JSONObject jsonObj = new JSONObject (response);
-                                        boolean error = jsonObj.getBoolean (AppConfigTags.ERROR);
-                                        String message = jsonObj.getString (AppConfigTags.MESSAGE);
-                                        ArrayList<String> questions = new ArrayList<> ();
-                                        if (! error) {
-                                            if (submitted) {
-                                                new MaterialDialog.Builder (SurveyActivity.this)
-                                                        .content (message)
-                                                        .cancelable (false)
-                                                        .canceledOnTouchOutside (false)
-                                                        .positiveText (getResources ().getString (R.string.dialog_action_ok))
-                                                        .typeface (SetTypeFace.getTypeface (SurveyActivity.this), SetTypeFace.getTypeface (SurveyActivity.this))
-                                                        .onPositive (new MaterialDialog.SingleButtonCallback () {
-                                                            @Override
-                                                            public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                                                dialog.dismiss ();
-                                                                db.deleteAllSurveyResponses (job_id, survey_id);
-                                                                finish ();
-                                                                overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
-                                                            }
-                                                        })
-                                                        .show ();
-                                            } else {
-                                                new MaterialDialog.Builder (SurveyActivity.this)
-                                                        .content (message)
-                                                        .cancelable (false)
-                                                        .canceledOnTouchOutside (false)
-                                                        .positiveText (getResources ().getString (R.string.dialog_action_ok))
-                                                        .typeface (SetTypeFace.getTypeface (SurveyActivity.this), SetTypeFace.getTypeface (SurveyActivity.this))
-                                                        .onPositive (new MaterialDialog.SingleButtonCallback () {
-                                                            @Override
-                                                            public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                                                dialog.dismiss ();
-                                                                db.deleteAllSurveyResponses (job_id, survey_id);
-                                                                finish ();
-                                                                overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
-                                                            }
-                                                        })
-                                                        .show ();
+    private void submitResponsesToServer () {
+        if (NetworkConnection.isNetworkAvailable (SurveyActivity.this)) {
+            Utils.showProgressDialog (SurveyActivity.this, progressDialog, getResources ().getString (R.string.progress_dialog_text_please_wait), true);
+            Utils.showLog (Log.INFO, "" + AppConfigTags.URL, AppConfigURL.SUBMIT_RESPONSES, true);
+            StringRequest strRequest1 = new StringRequest (Request.Method.POST, AppConfigURL.SUBMIT_RESPONSES,
+                    new Response.Listener<String> () {
+                        @Override
+                        public void onResponse (String response) {
+                            Utils.showLog (Log.INFO, AppConfigTags.SERVER_RESPONSE, response, true);
+                            if (response != null) {
+                                try {
+                                    JSONObject jsonObj = new JSONObject (response);
+                                    boolean error = jsonObj.getBoolean (AppConfigTags.ERROR);
+                                    String message = jsonObj.getString (AppConfigTags.MESSAGE);
+                                    ArrayList<String> questions = new ArrayList<> ();
+                                    if (! error) {
+                                        new MaterialDialog.Builder (SurveyActivity.this)
+                                                .content (message)
+                                                .cancelable (false)
+                                                .canceledOnTouchOutside (false)
+                                                .positiveText (getResources ().getString (R.string.dialog_action_ok))
+                                                .typeface (SetTypeFace.getTypeface (SurveyActivity.this), SetTypeFace.getTypeface (SurveyActivity.this))
+                                                .onPositive (new MaterialDialog.SingleButtonCallback () {
+                                                    @Override
+                                                    public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                        dialog.dismiss ();
+                                                        db.deleteAllSurveyResponses (survey_id, group_id, assignment_id);
+                                                        finish ();
+                                                        overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
+                                                    }
+                                                })
+                                                .show ();
+                                    } else {
+/*
+                                        JSONArray jsonArray = jsonObj.getJSONArray (AppConfigTags.INVALID_QUESTIONS);
+                                        if (jsonArray.length () > 0) {
+                                            for (int k = 0; k < jsonArray.length (); k++) {
+                                                questions.add (jsonArray.getString (k));
                                             }
+                                            new MaterialDialog.Builder (SurveyActivity.this)
+                                                    .content (message)
+                                                    .items (questions)
+                                                    .positiveText (getResources ().getString (R.string.dialog_action_ok))
+                                                    .typeface (SetTypeFace.getTypeface (SurveyActivity.this), SetTypeFace.getTypeface (SurveyActivity.this))
+                                                    .onPositive (new MaterialDialog.SingleButtonCallback () {
+                                                        @Override
+                                                        public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                            dialog.dismiss ();
+                                                            db.deleteAllSurveyResponses (job_id, survey_id);
+                                                            finish ();
+                                                            overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
+                                                        }
+                                                    })
+                                                    .show ();
                                         } else {
-                                            JSONArray jsonArray = jsonObj.getJSONArray (AppConfigTags.INVALID_QUESTIONS);
-                                            if (jsonArray.length () > 0) {
-                                                for (int k = 0; k < jsonArray.length (); k++) {
-                                                    questions.add (jsonArray.getString (k));
-                                                }
-                                                new MaterialDialog.Builder (SurveyActivity.this)
-                                                        .content (message)
-                                                        .items (questions)
-                                                        .positiveText (getResources ().getString (R.string.dialog_action_ok))
-                                                        .typeface (SetTypeFace.getTypeface (SurveyActivity.this), SetTypeFace.getTypeface (SurveyActivity.this))
-                                                        .onPositive (new MaterialDialog.SingleButtonCallback () {
-                                                            @Override
-                                                            public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                                                dialog.dismiss ();
-                                                                db.deleteAllSurveyResponses (job_id, survey_id);
-                                                                finish ();
-                                                                overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
-                                                            }
-                                                        })
-                                                        .show ();
-                                            } else {
-                                                Utils.showSnackBar (SurveyActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
-                                            }
-                                        }
-                                        progressDialog.dismiss ();
-                                    } catch (Exception e) {
-                                        progressDialog.dismiss ();
-                                        Utils.showSnackBar (SurveyActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
-                                        e.printStackTrace ();
+*/
+                                        Utils.showSnackBar (SurveyActivity.this, clMain, message, Snackbar.LENGTH_LONG, null, null);
+//                                        }
                                     }
-                                } else {
-                                    Utils.showSnackBar (SurveyActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
-                                    Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
+                                    progressDialog.dismiss ();
+                                } catch (Exception e) {
+                                    progressDialog.dismiss ();
+                                    Utils.showSnackBar (SurveyActivity.this, clMain, getResources ().getString (R.string.snackbar_text_exception_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
+                                    e.printStackTrace ();
                                 }
-                                progressDialog.dismiss ();
-                            }
-                        },
-                        new Response.ErrorListener () {
-                            @Override
-                            public void onErrorResponse (VolleyError error) {
-                                progressDialog.dismiss ();
-                                Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                            } else {
                                 Utils.showSnackBar (SurveyActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
+                                Utils.showLog (Log.WARN, AppConfigTags.SERVER_RESPONSE, AppConfigTags.DIDNT_RECEIVE_ANY_DATA_FROM_SERVER, true);
                             }
-                        }) {
-                    @Override
-                    protected Map<String, String> getParams () throws AuthFailureError {
-                        Map<String, String> params = new Hashtable<String, String> ();
-                        Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
-                        return params;
-                    }
-                    
-                    @Override
-                    public Map<String, String> getHeaders () throws AuthFailureError {
-                        Map<String, String> params = new HashMap<> ();
-                        AppDetailsPref appDetailsPref = AppDetailsPref.getInstance ();
-                        params.put (AppConfigTags.HEADER_API_KEY, Constants.api_key);
-                        params.put (AppConfigTags.HEADER_AUTHORIZATION, "Basic " + appDetailsPref.getStringPref (SurveyActivity.this, AppDetailsPref.USER_TOKEN));
-                        Utils.showLog (Log.INFO, AppConfigTags.HEADERS_SENT_TO_THE_SERVER, "" + params, false);
-                        return params;
-                    }
-                    
-                    @Override
-                    public byte[] getBody () throws AuthFailureError {
-                        responseList = db.getAllResponses (job_id, survey_id);
-                        JSONObject jsonObject = new JSONObject ();
-                        try {
-                            jsonObject.put (AppConfigTags.JOB_ID, job_id);
-                            jsonObject.put (AppConfigTags.SURVEY_ID, survey_id);
-                            jsonObject.put (AppConfigTags.SUBMITTED, submitted);
-                            JSONArray jsonArray = new JSONArray ();
-                            
-                            for (int i = 0; i < responseList.size (); i++) {
-                                com.windcom.model.Response response = responseList.get (i);
-                                JSONObject jsonObject1 = new JSONObject ();
-                                jsonObject1.put (AppConfigTags.QUESTION_TYPE, response.getQuestion_type ());
-                                jsonObject1.put (AppConfigTags.QUESTION_ID, response.getQuestion_id ());
-                                switch (response.getQuestion_type ()) {
-                                    case AppConfigTags.TYPE_CHECKBOX:
-                                        jsonObject1.put (AppConfigTags.RESPONSE_IDS, response.getResponse_ids ());
-                                        break;
-                                    case AppConfigTags.TYPE_DROPDOWN:
-                                        jsonObject1.put (AppConfigTags.RESPONSE_IDS, response.getResponse_ids ());
-                                        break;
-                                    case AppConfigTags.TYPE_RADIO:
-                                        jsonObject1.put (AppConfigTags.RESPONSE_IDS, response.getResponse_ids ());
-                                        break;
-                                    case AppConfigTags.TYPE_MULTI_INPUT:
-                                        jsonObject1.put (AppConfigTags.RESPONSE_IDS, response.getResponse_ids ());
-                                        break;
-                                    case AppConfigTags.TYPE_TABLE:
-                                        jsonObject1.put (AppConfigTags.RESPONSE_IDS, response.getResponse_ids ());
-                                        break;
-                                    default:
-                                        jsonObject1.put (AppConfigTags.RESPONSE_IDS, "");
-                                        break;
-                                }
-                                jsonObject1.put (AppConfigTags.RESPONSE_VALUES, response.getResponse_values ());
-                                jsonArray.put (jsonObject1);
-                            }
-                            jsonObject.put (AppConfigTags.QUESTIONS, jsonArray);
-    //                        Log.e ("karman", "JSON : " + jsonObject.toString ());
-                        } catch (Exception e) {
-                            e.printStackTrace ();
+                            progressDialog.dismiss ();
                         }
-                        String str = jsonObject.toString ();
-                        Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, str, true);
-                        return str.getBytes ();
+                    },
+                    new Response.ErrorListener () {
+                        @Override
+                        public void onErrorResponse (VolleyError error) {
+                            progressDialog.dismiss ();
+                            Utils.showLog (Log.ERROR, AppConfigTags.VOLLEY_ERROR, error.toString (), true);
+                            Utils.showSnackBar (SurveyActivity.this, clMain, getResources ().getString (R.string.snackbar_text_error_occurred), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_dismiss), null);
+                        }
+                    }) {
+                
+                @Override
+                protected Map<String, String> getParams () throws AuthFailureError {
+                    Map<String, String> params = new Hashtable<String, String> ();
+                    params.put (AppConfigTags.USER_ID, String.valueOf (userDetailsPref.getIntPref (SurveyActivity.this, UserDetailsPref.USER_ID)));
+                    ArrayList<com.resultier.crux.models.Response> responseList = new ArrayList<> ();
+                    responseList = db.getAllResponses (survey_id, group_id, assignment_id);
+                    JSONObject jsonObject = new JSONObject ();
+                    try {
+                        JSONArray jsonArray = new JSONArray ();
+                        
+                        for (int i = 0; i < responseList.size (); i++) {
+                            com.resultier.crux.models.Response response = responseList.get (i);
+                            JSONObject jsonObject1 = new JSONObject ();
+                            jsonObject1.put (AppConfigTags.QUESTION_TYPE, response.getQuestion_type ());
+                            jsonObject1.put (AppConfigTags.QUESTION_ID, response.getQuestion_id ());
+                            switch (response.getQuestion_type ()) {
+                                case AppConfigTags.TYPE_INPUT:
+                                    jsonObject1.put (AppConfigTags.ANSWER, response.getResponse_values ());
+                                    break;
+                                case AppConfigTags.TYPE_RADIO:
+                                    jsonObject1.put (AppConfigTags.ANSWER, response.getResponse_ids ());
+                                    break;
+                                case AppConfigTags.TYPE_CHECKBOX:
+                                    jsonObject1.put (AppConfigTags.ANSWER, response.getResponse_ids ());
+                                    break;
+                                case AppConfigTags.TYPE_RATING:
+                                    jsonObject1.put (AppConfigTags.ANSWER, response.getResponse_values ());
+                                    break;
+                                case AppConfigTags.TYPE_SLIDER:
+                                    jsonObject1.put (AppConfigTags.ANSWER, response.getResponse_values ());
+                                    break;
+                                default:
+                                    jsonObject1.put (AppConfigTags.ANSWER, "");
+                                    break;
+                            }
+                            jsonArray.put (jsonObject1);
+                        }
+                        jsonObject.put (AppConfigTags.QUESTIONS, jsonArray);
+                    } catch (Exception e) {
+                        e.printStackTrace ();
                     }
                     
-                    public String getBodyContentType () {
-                        return "application/json; charset=utf-8";
-                    }
+                    Log.e ("karman", jsonObject.toString ());
                     
-                };
-                Utils.sendRequest (strRequest1, 60);
-            } else {
-                Utils.showSnackBar (this, clMain, getResources ().getString (R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_go_to_settings), new View.OnClickListener () {
-                    @Override
-                    public void onClick (View v) {
-                        Intent dialogIntent = new Intent (Settings.ACTION_SETTINGS);
-                        dialogIntent.addFlags (Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity (dialogIntent);
-                    }
-                });
-            }
+                    params.put (AppConfigTags.RESPONSES, jsonObject.toString ());
+                    params.put (AppConfigTags.SURVEY_ID, String.valueOf (survey_id));
+                    params.put (AppConfigTags.GROUP_ID, String.valueOf (group_id));
+                    params.put (AppConfigTags.ASSIGNMENT_ID, String.valueOf (assignment_id));
+                    params.put (AppConfigTags.USER_ID, String.valueOf (userDetailsPref.getIntPref (SurveyActivity.this, UserDetailsPref.USER_ID)));
+                    Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
+                    return params;
+                }
+                
+                @Override
+                public Map<String, String> getHeaders () throws AuthFailureError {
+                    Map<String, String> params = new HashMap<> ();
+                    params.put (AppConfigTags.HEADER_API_KEY, Constants.api_key);
+                    Utils.showLog (Log.INFO, AppConfigTags.HEADERS_SENT_TO_THE_SERVER, "" + params, false);
+                    return params;
+                }
+            };
+            Utils.sendRequest (strRequest1, 60);
+        } else {
+            Utils.showSnackBar (this, clMain, getResources ().getString (R.string.snackbar_text_no_internet_connection_available), Snackbar.LENGTH_LONG, getResources ().getString (R.string.snackbar_action_go_to_settings), new View.OnClickListener () {
+                @Override
+                public void onClick (View v) {
+                    Intent dialogIntent = new Intent (Settings.ACTION_SETTINGS);
+                    dialogIntent.addFlags (Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity (dialogIntent);
+                }
+            });
         }
-    */
+    }
+    
     private boolean showOfflineData (int survey_id) {
         return false;
     }

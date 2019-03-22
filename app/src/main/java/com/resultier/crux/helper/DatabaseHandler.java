@@ -7,18 +7,20 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.resultier.crux.models.Response;
 import com.resultier.crux.utils.AppConfigTags;
 import com.resultier.crux.utils.Utils;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
     // Database Version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     // Database Name
-    private static final String DATABASE_NAME = "microsurver";
+    private static final String DATABASE_NAME = "microsurvey";
     
     // Table Names
     private static final String TABLE_RESPONSES = "tbl_responses";
@@ -27,6 +29,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Responses Table - column names
     private static final String RSPNS_ID = "rspns_id";
     private static final String RSPNS_SURVEY_ID = "rspns_survey_id";
+    private static final String RSPNS_GROUP_ID = "rspns_group_id";
+    private static final String RSPNS_ASSIGNMENT_ID = "rspns_assignment_id";
     private static final String RSPNS_QUESTION_ID = "rspns_question_id";
     private static final String RSPNS_QUESTION_TYPE = "rspns_question_type";
     private static final String RSPNS_IDS = "rspns_ids";
@@ -44,6 +48,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             + TABLE_RESPONSES + "(" +
             RSPNS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             RSPNS_SURVEY_ID + " INTEGER," +
+            RSPNS_GROUP_ID + " INTEGER," +
+            RSPNS_ASSIGNMENT_ID + " INTEGER," +
             RSPNS_QUESTION_ID + " INTEGER," +
             RSPNS_QUESTION_TYPE + " TEXT," +
             RSPNS_IDS + " TEXT," +
@@ -90,8 +96,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return dateFormat.format (date);
     }
     
-    public boolean isResponseExist (int survey_id, int question_id) {
-        String countQuery = "SELECT * FROM " + TABLE_RESPONSES + " WHERE " + RSPNS_SURVEY_ID + " = " + survey_id + " AND " + RSPNS_QUESTION_ID + " = " + question_id;
+    public boolean isResponseExist (int survey_id, int group_id, int assignment_id, int question_id) {
+        String countQuery = "SELECT * FROM " + TABLE_RESPONSES + " WHERE " + RSPNS_SURVEY_ID + " = " + survey_id + " AND " + RSPNS_GROUP_ID + " = " + group_id + " AND " + RSPNS_ASSIGNMENT_ID + " = " + assignment_id + " AND " + RSPNS_QUESTION_ID + " = " + question_id;
         SQLiteDatabase db = this.getReadableDatabase ();
         Cursor cursor = db.rawQuery (countQuery, null);
         int count = cursor.getCount ();
@@ -103,11 +109,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
     }
     
-    public long insertResponse (int survey_id, int question_id, String question_type, String response_ids, String response_values) {
+    public long insertResponse (int survey_id, int group_id, int assignment_id, int question_id, String question_type, String response_ids, String response_values) {
         SQLiteDatabase db = this.getWritableDatabase ();
         Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Inserting Response", LOG_FLAG);
         ContentValues values = new ContentValues ();
         values.put (RSPNS_SURVEY_ID, survey_id);
+        values.put (RSPNS_GROUP_ID, group_id);
+        values.put (RSPNS_ASSIGNMENT_ID, assignment_id);
         values.put (RSPNS_QUESTION_ID, question_id);
         values.put (RSPNS_QUESTION_TYPE, question_type);
         values.put (RSPNS_IDS, response_ids);
@@ -115,18 +123,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return db.insert (TABLE_RESPONSES, null, values);
     }
     
-    public int updateResponse (int survey_id, int question_id, String question_type, String response_ids, String response_values) {
+    public int updateResponse (int survey_id, int group_id, int assignment_id, int question_id, String question_type, String response_ids, String response_values) {
         SQLiteDatabase db = this.getWritableDatabase ();
         Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Update Response in Question ID = " + question_id, LOG_FLAG);
         ContentValues values = new ContentValues ();
         values.put (RSPNS_IDS, response_ids);
         values.put (RSPNS_VALUES, response_values);
-        return db.update (TABLE_RESPONSES, values, RSPNS_SURVEY_ID + " = ? AND " + RSPNS_QUESTION_ID + " = ? AND " + RSPNS_QUESTION_TYPE + " = ?", new String[] {String.valueOf (survey_id), String.valueOf (question_id), question_type});
+        return db.update (TABLE_RESPONSES, values, RSPNS_SURVEY_ID + " = ? AND " + RSPNS_QUESTION_ID + " = ? AND " + RSPNS_QUESTION_TYPE + " = ? AND " + RSPNS_GROUP_ID + " = ? AND " + RSPNS_ASSIGNMENT_ID + " = ?", new String[] {String.valueOf (survey_id), String.valueOf (question_id), question_type, String.valueOf (group_id), String.valueOf (assignment_id)});
     }
     
-    public String getResponseID (int survey_id, int question_id) {
+    public String getResponseID (int survey_id, int group_id, int assignment_id, int question_id) {
         SQLiteDatabase db = this.getReadableDatabase ();
-        String selectQuery = "SELECT * FROM " + TABLE_RESPONSES + " WHERE " + RSPNS_SURVEY_ID + " = " + survey_id + " AND " + RSPNS_QUESTION_ID + " = " + question_id;
+        String selectQuery = "SELECT * FROM " + TABLE_RESPONSES + " WHERE " + RSPNS_SURVEY_ID + " = " + survey_id + " AND " + RSPNS_GROUP_ID + " = " + group_id + " AND " + RSPNS_ASSIGNMENT_ID + " = " + assignment_id + " AND " + RSPNS_QUESTION_ID + " = " + question_id;
         Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get Response where Question ID = " + question_id, LOG_FLAG);
         Cursor c = db.rawQuery (selectQuery, null);
         if (c != null)
@@ -134,15 +142,44 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return c.getString (c.getColumnIndex (RSPNS_IDS));
     }
     
-    public String getResponseValue (int survey_id, int question_id) {
+    public String getResponseValue (int survey_id, int group_id, int assignment_id, int question_id) {
         SQLiteDatabase db = this.getReadableDatabase ();
-        String selectQuery = "SELECT * FROM " + TABLE_RESPONSES + " WHERE " + RSPNS_SURVEY_ID + " = " + survey_id + " AND " + RSPNS_QUESTION_ID + " = " + question_id;
+        String selectQuery = "SELECT * FROM " + TABLE_RESPONSES + " WHERE " + RSPNS_SURVEY_ID + " = " + survey_id + " AND " + RSPNS_GROUP_ID + " = " + group_id + " AND " + RSPNS_ASSIGNMENT_ID + " = " + assignment_id + " AND " + RSPNS_QUESTION_ID + " = " + question_id;
         Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get Response where Question ID = " + question_id, LOG_FLAG);
         Cursor c = db.rawQuery (selectQuery, null);
         if (c != null)
             c.moveToFirst ();
         return c.getString (c.getColumnIndex (RSPNS_VALUES));
     }
+    
+    
+    public ArrayList<Response> getAllResponses (int survey_id, int group_id, int assignment_id) {
+        ArrayList<Response> responseList = new ArrayList<Response> ();
+        SQLiteDatabase db = this.getReadableDatabase ();
+        String selectQuery = "SELECT  * FROM " + TABLE_RESPONSES + " WHERE " + RSPNS_SURVEY_ID + " = " + survey_id + " AND " + RSPNS_GROUP_ID + " = " + group_id + " AND " + RSPNS_ASSIGNMENT_ID + " = " + assignment_id;
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get all Responses", LOG_FLAG);
+        Cursor c = db.rawQuery (selectQuery, null);
+        if (c.moveToFirst ()) {
+            do {
+                responseList.add (new Response (
+                        c.getInt (c.getColumnIndex (RSPNS_SURVEY_ID)),
+                        c.getInt (c.getColumnIndex (RSPNS_GROUP_ID)),
+                        c.getInt (c.getColumnIndex (RSPNS_ASSIGNMENT_ID)),
+                        c.getInt (c.getColumnIndex (RSPNS_QUESTION_ID)),
+                        c.getString (c.getColumnIndex (RSPNS_QUESTION_TYPE)),
+                        c.getString (c.getColumnIndex (RSPNS_IDS)),
+                        c.getString (c.getColumnIndex (RSPNS_VALUES))));
+            } while (c.moveToNext ());
+        }
+        return responseList;
+    }
+    
+    public void deleteAllSurveyResponses (int survey_id, int group_id, int assignment_id) {
+        SQLiteDatabase db = this.getWritableDatabase ();
+        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete Response where Survey ID = " + survey_id, LOG_FLAG);
+        db.execSQL ("DELETE FROM " + TABLE_RESPONSES + " WHERE " + RSPNS_SURVEY_ID + " = " + survey_id + " AND " + RSPNS_GROUP_ID + " = " + group_id + " AND " + RSPNS_ASSIGNMENT_ID + " = " + assignment_id);
+    }
+    
     
     public boolean isSurveyJSONExist (int survey_id) {
         String countQuery = "SELECT * FROM " + TABLE_SURVEYS + " WHERE " + SRVY_ID + " = " + survey_id;
@@ -265,32 +302,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL ("DELETE FROM " + TABLE_RESPONSES + " WHERE " + RSPNS_JOB_ID + " = " + job_id + " AND " + RSPNS_SURVEY_ID + " = " + survey_id + " AND " + RSPNS_QUESTION_ID + " = " + question_id);
     }
     
-    public void deleteAllSurveyResponses (int job_id, int survey_id) {
-        SQLiteDatabase db = this.getWritableDatabase ();
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Delete Response where Job ID = " + job_id + " AND Survey ID = " + survey_id, LOG_FLAG);
-        db.execSQL ("DELETE FROM " + TABLE_RESPONSES + " WHERE " + RSPNS_JOB_ID + " = " + job_id + " AND " + RSPNS_SURVEY_ID + " = " + survey_id);
-    }
+   
     
-    public ArrayList<Response> getAllResponses (int job_id, int survey_id) {
-        ArrayList<Response> responseList = new ArrayList<Response> ();
-        SQLiteDatabase db = this.getReadableDatabase ();
-        String selectQuery = "SELECT  * FROM " + TABLE_RESPONSES + " WHERE " + RSPNS_JOB_ID + " = " + job_id + " AND " + RSPNS_SURVEY_ID + " = " + survey_id;
-        Utils.showLog (Log.DEBUG, AppConfigTags.DATABASE_LOG, "Get all Responses", LOG_FLAG);
-        Cursor c = db.rawQuery (selectQuery, null);
-        if (c.moveToFirst ()) {
-            do {
-                responseList.add (new Response (
-                        c.getInt (c.getColumnIndex (RSPNS_JOB_ID)),
-                        c.getInt (c.getColumnIndex (RSPNS_SURVEY_ID)),
-                        c.getInt (c.getColumnIndex (RSPNS_QUESTION_ID)),
-                        c.getString (c.getColumnIndex (RSPNS_QUESTION_TYPE)),
-                        c.getString (c.getColumnIndex (RSPNS_IDS)),
-                        c.getString (c.getColumnIndex (RSPNS_VALUES))));
-            } while (c.moveToNext ());
-        }
-        return responseList;
-    }
-    
+   
     
     
     

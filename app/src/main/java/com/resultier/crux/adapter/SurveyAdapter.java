@@ -43,11 +43,11 @@ public class SurveyAdapter extends RecyclerView.Adapter<SurveyAdapter.ViewHolder
         Utils.setTypefaceToAllViews (activity, holder.tvPollQuestion);
         holder.tvPollTitle.setText (survey.getSurvey_title ());
         holder.tvPollQuestion.setText (survey.getSurvey_question ());
-        
-        SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+    
+        SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd");
         try {
             Date mDate = sdf.parse (survey.getSurvey_date ());
-            holder.tvTime.setText ("" + TimeAgo.using (mDate.getTime ()) + " at " + Utils.convertTimeFormat (survey.getSurvey_date (), "yyyy-MM-dd HH:mm:ss", "HH:mm"));
+            holder.tvTime.setText ("" + TimeAgo.using (mDate.getTime ()));
         } catch (ParseException e) {
             e.printStackTrace ();
         }

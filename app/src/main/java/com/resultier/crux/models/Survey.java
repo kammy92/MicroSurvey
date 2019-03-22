@@ -5,15 +5,33 @@ package com.resultier.crux.models;
  */
 
 public class Survey {
-    int survey_id, survey_status;
+    int survey_id, group_id, assignment_id, survey_status;
     String survey_title, survey_question, survey_date;
     
-    public Survey (int survey_id, int survey_status, String survey_title, String survey_question, String survey_date) {
+    public Survey (int survey_id, int group_id, int assignment_id, int survey_status, String survey_title, String survey_question, String survey_date) {
         this.survey_id = survey_id;
+        this.group_id = group_id;
+        this.assignment_id = assignment_id;
         this.survey_status = survey_status;
         this.survey_title = survey_title;
         this.survey_question = survey_question;
         this.survey_date = survey_date;
+    }
+    
+    public int getGroup_id () {
+        return group_id;
+    }
+    
+    public void setGroup_id (int group_id) {
+        this.group_id = group_id;
+    }
+    
+    public int getAssignment_id () {
+        return assignment_id;
+    }
+    
+    public void setAssignment_id (int assignment_id) {
+        this.assignment_id = assignment_id;
     }
     
     public String getSurvey_date () {

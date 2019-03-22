@@ -179,6 +179,10 @@ public class AppConfigTags {
     public static final String NOTIFICATION_LINES = "lines";
     
     
+    public static final String GROUP_ID = "group_id";
+    public static final String ASSIGNMENT_ID = "assignment_id";
+    
+    
     public static final String SURVEYS = "surveys";
     public static final String SURVEY_ID = "survey_id";
     public static final String SURVEY_TITLE = "survey_title";
@@ -203,4 +207,7 @@ public class AppConfigTags {
     public static final String TYPE_CHECKBOX = "TYPE_CHECKBOX";
     public static final String TYPE_RATING = "TYPE_RATING";
     public static final String TYPE_SLIDER = "TYPE_SLIDER";
+    
+    public static final String ANSWER = "answer";
+    public static final String RESPONSES = "responses";
 }
