@@ -365,6 +365,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onItemClick (View view, int position) {
         Survey survey = surveyList.get (position);
+        if (survey.getSurvey_status () == 1) {
+        
+        }
         Intent intent = new Intent (MainActivity.this, SurveyActivity.class);
         intent.putExtra (AppConfigTags.SURVEY_ID, survey.getSurvey_id ());
         intent.putExtra (AppConfigTags.GROUP_ID, survey.getGroup_id ());
