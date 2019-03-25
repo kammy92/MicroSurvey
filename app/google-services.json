@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "651786951669",
+    "firebase_url": "https://microsurvey-by-crux.firebaseio.com",
+    "project_id": "microsurvey-by-crux",
+    "storage_bucket": "microsurvey-by-crux.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:651786951669:android:d51d945d76eb0d57",
+        "android_client_info": {
+          "package_name": "com.resultier.crux"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "651786951669-qupthi348crcvampf13k8b9k2u9jcp96.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC19i0xNZWbN5c4D37PbOytE7JUCEG36oA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

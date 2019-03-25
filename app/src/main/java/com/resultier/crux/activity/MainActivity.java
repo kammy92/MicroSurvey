@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -21,6 +22,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -38,6 +41,7 @@ import com.resultier.crux.utils.Constants;
 import com.resultier.crux.utils.DashDivider;
 import com.resultier.crux.utils.NetworkConnection;
 import com.resultier.crux.utils.RecyclerViewMargin;
+import com.resultier.crux.utils.SetTypeFace;
 import com.resultier.crux.utils.UserDetailsPref;
 import com.resultier.crux.utils.Utils;
 
@@ -75,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initData ();
         initListeners ();
         isLogin ();
-        getPollList ();
     }
     
     public void initData () {
@@ -128,6 +131,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         surveyAdapter.setOnItemClickListener (this);
+        rlBack.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick (View v) {
+                showLogOutDialog ();
+            }
+        });
     }
     
     public void isLogin () {
@@ -252,6 +261,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 protected Map<String, String> getParams () throws AuthFailureError {
                     Map<String, String> params = new Hashtable<String, String> ();
                     params.put (AppConfigTags.USER_ID, String.valueOf (userDetailsPref.getIntPref (MainActivity.this, UserDetailsPref.USER_ID)));
+                    params.put (AppConfigTags.FIREBASE_ID, userDetailsPref.getStringPref (MainActivity.this, UserDetailsPref.FIREBASE_ID));
                     Utils.showLog (Log.INFO, AppConfigTags.PARAMETERS_SENT_TO_THE_SERVER, "" + params, true);
                     return params;
                 }
@@ -365,15 +375,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onItemClick (View view, int position) {
         Survey survey = surveyList.get (position);
-        if (survey.getSurvey_status () == 1) {
-        
+        if (survey.getSurvey_status () == 0) {
+            Intent intent = new Intent (MainActivity.this, SurveyActivity.class);
+            intent.putExtra (AppConfigTags.SURVEY_ID, survey.getSurvey_id ());
+            intent.putExtra (AppConfigTags.GROUP_ID, survey.getGroup_id ());
+            intent.putExtra (AppConfigTags.ASSIGNMENT_ID, survey.getAssignment_id ());
+            intent.putExtra (AppConfigTags.SURVEY_TITLE, survey.getSurvey_title ());
+            overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);
+            startActivity (intent);
+        } else {
+            Utils.showToast (MainActivity.this, "You have already answered this poll", false);
         }
-        Intent intent = new Intent (MainActivity.this, SurveyActivity.class);
-        intent.putExtra (AppConfigTags.SURVEY_ID, survey.getSurvey_id ());
-        intent.putExtra (AppConfigTags.GROUP_ID, survey.getGroup_id ());
-        intent.putExtra (AppConfigTags.ASSIGNMENT_ID, survey.getAssignment_id ());
-        intent.putExtra (AppConfigTags.SURVEY_TITLE, survey.getSurvey_title ());
-        overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);
-        startActivity (intent);
+    }
+    
+    private void showLogOutDialog () {
+        MaterialDialog dialog = new MaterialDialog.Builder (this)
+                .contentColor (getResources ().getColor (R.color.primary_text))
+                .positiveColor (getResources ().getColor (R.color.primary_text))
+                .negativeColor (getResources ().getColor (R.color.primary_text))
+                .content (R.string.dialog_text_sign_out)
+                .positiveText (R.string.dialog_action_yes)
+                .negativeText (R.string.dialog_action_no)
+                .typeface (SetTypeFace.getTypeface (MainActivity.this), SetTypeFace.getTypeface (MainActivity.this))
+                .onPositive (new MaterialDialog.SingleButtonCallback () {
+                    @Override
+                    public void onClick (@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        userDetailsPref.putIntPref (MainActivity.this, UserDetailsPref.USER_ID, 0);
+                        Intent intent = new Intent (MainActivity.this, LoginActivity.class);
+                        intent.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity (intent);
+                        overridePendingTransition (R.anim.slide_in_left, R.anim.slide_out_right);
+                    }
+                }).build ();
+        dialog.show ();
+    }
+    
+    @Override
+    protected void onResume () {
+        super.onResume ();
+        getPollList ();
     }
 }

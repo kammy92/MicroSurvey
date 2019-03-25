@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 public class UserDetailsPref {
     public static String USER_ID = "user_id";
+    public static String FIREBASE_ID = "firebase_id";
     private static UserDetailsPref userDetailsPref;
     private String USER_DETAILS = "USER_DETAILS";
     

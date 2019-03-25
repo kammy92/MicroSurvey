@@ -10,6 +10,9 @@
     <string name="chatbot">CHATBOT</string>
 
 
+    <string name="dialog_text_sign_out">Do you wish to Sign Out?</string>
+
+
     <string name="select_atm">Select ATM</string>
     <string name="search_atm_by_id">Search ATM by ATM Id / ATM Name</string>
     <string name="recent">Recent</string>

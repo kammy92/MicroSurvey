@@ -88,7 +88,7 @@ public class NotificationUtils {
         return 0;
     }
     
-    public void showNotificationMessage (Intent intent, Notification notification) {
+    public void showNotificationMessage (Notification notification) {
         final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder (mContext);
         final Uri alarmSound = Uri.parse (ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + mContext.getPackageName () + "/raw/notification");
         
@@ -113,7 +113,7 @@ public class NotificationUtils {
                 try {
                     JSONObject jsonObject = notification.getPayload ();
                     mBuilder
-                            .setSmallIcon (R.mipmap.ic_launcher)
+//                            .setSmallIcon (R.drawable.ic_notification)
                             .setContentTitle (notification.getTitle ())
                             .setPriority (notification.getNotification_priority ())
                             .setLargeIcon (largeIcon)
@@ -140,7 +140,7 @@ public class NotificationUtils {
                     
                     mBuilder
                             .setContentTitle (notification.getTitle ())
-                            .setSmallIcon (R.mipmap.ic_launcher)
+//                            .setSmallIcon (R.drawable.ic_notification)
                             .setPriority (notification.getNotification_priority ())
                             .setContentText (notification.getMessage ())
                             .setAutoCancel (true)
@@ -161,7 +161,7 @@ public class NotificationUtils {
                 try {
                     JSONObject jsonObject = notification.getPayload ();
                     mBuilder.setContentTitle (notification.getTitle ())
-                            .setSmallIcon (R.mipmap.ic_launcher)
+//                            .setSmallIcon (R.drawable.ic_notification)
                             .setContentText (notification.getMessage ())
                             .setLargeIcon (largeIcon)
                             .setPriority (notification.getNotification_priority ())
@@ -197,14 +197,13 @@ public class NotificationUtils {
                     bigPictureStyle.bigPicture (bitmap);
                     
                     mBuilder
-                            .setSmallIcon (R.mipmap.ic_launcher)
+//                            .setSmallIcon (R.drawable.ic_notification)
                             .setContentTitle (notification.getTitle ())
                             .setContentText (notification.getMessage ())
                             .setLargeIcon (largeIcon)
                             .setContentIntent (pendingIntent2)
                             .setAutoCancel (true)
                             .setPriority (jsonObject.getInt (AppConfigTags.NOTIFICATION_PRIORITY));
-                    ;
                     
                     if (jsonObject.getString (AppConfigTags.NOTIFICATION_SUB_TEXT).length () > 0) {
 //                        bigPictureStyle.setSummaryText (jsonObject.getString (AppConfigTags.NOTIFICATION_SUB_TEXT));
@@ -216,7 +215,31 @@ public class NotificationUtils {
                     e.printStackTrace ();
                 }
                 break;
+    
+            default:
+                try {
+                    JSONObject jsonObject = notification.getPayload ();
+                    mBuilder
+                            .setSmallIcon (R.drawable.ic_notification)
+                            .setContentTitle (notification.getTitle ())
+                            .setPriority (notification.getNotification_priority ())
+                            .setLargeIcon (largeIcon)
+                            .setAutoCancel (true)
+                            .setContentIntent (pendingIntent2)
+                            .setContentText (notification.getMessage ());
+            
+                    if (jsonObject.getString (AppConfigTags.NOTIFICATION_SUB_TEXT).length () > 0) {
+                        mBuilder.setSubText (jsonObject.getString (AppConfigTags.NOTIFICATION_SUB_TEXT));
+                    }
+            
+                } catch (Exception e) {
+                    e.printStackTrace ();
+                }
+        
+                break;
         }
+        
+        
         NotificationManager mNotifyManager = (NotificationManager) mContext.getSystemService (Context.NOTIFICATION_SERVICE);
         mNotifyManager.notify (notification_id, mBuilder.build ());
     }
