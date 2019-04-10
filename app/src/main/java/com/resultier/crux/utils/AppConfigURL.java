@@ -4,7 +4,8 @@ public class AppConfigURL {
     public static String version = "v1.0";
     
     //    private static String BASE_URL = "https://factory-app-cammy92.c9users.io/api_crux/" + version + "/";
-    private static String BASE_URL = "http://52.32.254.236/api/" + version + "/";
+//    private static String BASE_URL = "http://52.32.254.236/api/" + version + "/";
+    private static String BASE_URL = "http://cruxsurveys.com/api/" + version + "/";
     
     public static String LOGIN = BASE_URL + "app/login";
     public static String GET_POLLS = BASE_URL + "app/surveys";
