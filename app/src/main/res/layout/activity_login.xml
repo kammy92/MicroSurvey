@@ -90,6 +90,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="@dimen/activity_margin_small"
                 android:text="@string/forgot_password"
+                android:visibility="gone"
                 android:textColor="@color/primary_dark"
                 android:textSize="@dimen/text_size_small"/>
             <TextView

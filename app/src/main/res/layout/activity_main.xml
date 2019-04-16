@@ -94,7 +94,7 @@
                 android:layout_marginEnd="@dimen/activity_margin"
                 android:layout_marginTop="@dimen/activity_margin_small"
                 android:layout_marginBottom="@dimen/activity_margin_small"
-                android:text="All Polls"
+                android:text="All Surveys"
                 android:textColor="@color/primary_text"
                 android:textStyle="bold"
                 android:textSize="@dimen/text_size_heading"/>

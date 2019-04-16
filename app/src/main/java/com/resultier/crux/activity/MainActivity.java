@@ -384,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);
             startActivity (intent);
         } else {
-            Utils.showToast (MainActivity.this, "You have already answered this poll", false);
+            Utils.showToast (MainActivity.this, "You have already answered this survey", false);
         }
     }
     
