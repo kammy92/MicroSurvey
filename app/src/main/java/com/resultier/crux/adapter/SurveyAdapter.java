@@ -54,10 +54,12 @@ public class SurveyAdapter extends RecyclerView.Adapter<SurveyAdapter.ViewHolder
     
         switch (survey.getSurvey_status ()) {
             case 0:
-                holder.llResults.setAlpha (0.5f);
+                holder.vDot.setVisibility (View.VISIBLE);
+                holder.llPoll.setAlpha (1.0f);
                 break;
             case 1:
-                holder.llResults.setAlpha (1.0f);
+                holder.vDot.setVisibility (View.GONE);
+                holder.llPoll.setAlpha (0.5f);
                 break;
         }
     }
@@ -72,6 +74,8 @@ public class SurveyAdapter extends RecyclerView.Adapter<SurveyAdapter.ViewHolder
     }
     
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private LinearLayout llPoll;
+        private View vDot;
         private LinearLayout llResults;
         private TextView tvPollTitle;
         private TextView tvPollQuestion;
@@ -79,6 +83,8 @@ public class SurveyAdapter extends RecyclerView.Adapter<SurveyAdapter.ViewHolder
         
         public ViewHolder (@NonNull View itemView) {
             super (itemView);
+            vDot = (View) itemView.findViewById (R.id.vDot);
+            llPoll = (LinearLayout) itemView.findViewById (R.id.llPoll);
             llResults = (LinearLayout) itemView.findViewById (R.id.llResults);
             tvPollTitle = (TextView) itemView.findViewById (R.id.tvPollTitle);
             tvPollQuestion = (TextView) itemView.findViewById (R.id.tvPollQuestion);

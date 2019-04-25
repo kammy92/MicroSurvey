@@ -6,9 +6,10 @@ android {
         applicationId "com.resultier.crux"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 7
+        versionCode 9
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
