@@ -29,6 +29,10 @@
         <activity
             android:name=".activity.SurveyActivity"
             android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="SurveyActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
         </activity>
 
 
@@ -53,6 +57,10 @@
             android:resource="@drawable/ic_notification"/>
         <meta-data android:name="com.google.firebase.messaging.default_notification_color"
                    android:resource="@color/colorAccent"/>
+
+        <meta-data android:name="com.google.firebase.messaging."
+                   android:resource="@color/colorAccent"/>
+
     </application>
 
 </manifest>

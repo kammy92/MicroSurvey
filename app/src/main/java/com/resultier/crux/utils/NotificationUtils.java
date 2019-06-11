@@ -91,7 +91,9 @@ public class NotificationUtils {
     public void showNotificationMessage (Notification notification) {
         final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder (mContext);
         final Uri alarmSound = Uri.parse (ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + mContext.getPackageName () + "/raw/notification");
-        
+        Uri uri = RingtoneManager.getDefaultUri (RingtoneManager.TYPE_NOTIFICATION);
+        mBuilder.setSound (uri);
+
         //Check for empty push message
         PendingIntent pendingIntent = null;
         PendingIntent pendingIntent2 = null;

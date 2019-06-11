@@ -87,10 +87,15 @@ public class SurveyActivity extends AppCompatActivity {
     
     private void initExtras () {
         Intent mIntent = getIntent ();
-        survey_id = mIntent.getIntExtra (AppConfigTags.SURVEY_ID, 0);
-        group_id = mIntent.getIntExtra (AppConfigTags.GROUP_ID, 0);
-        assignment_id = mIntent.getIntExtra (AppConfigTags.ASSIGNMENT_ID, 0);
+        survey_id = Integer.parseInt (mIntent.getStringExtra (AppConfigTags.SURVEY_ID));
+        group_id = Integer.parseInt (mIntent.getStringExtra (AppConfigTags.GROUP_ID));
+        assignment_id = Integer.parseInt (mIntent.getStringExtra (AppConfigTags.ASSIGNMENT_ID));
         survey_title = mIntent.getStringExtra (AppConfigTags.SURVEY_TITLE);
+    
+        Log.e ("karman", "survey id : " + survey_id);
+        Log.e ("karman", "group id : " + group_id);
+        Log.e ("karman", "assignment id : " + assignment_id);
+        Log.e ("karman", "survey title : " + survey_title);
     }
     
     private void initView () {

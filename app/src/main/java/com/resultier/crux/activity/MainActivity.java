@@ -377,9 +377,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Survey survey = surveyList.get (position);
         if (survey.getSurvey_status () == 0) {
             Intent intent = new Intent (MainActivity.this, SurveyActivity.class);
-            intent.putExtra (AppConfigTags.SURVEY_ID, survey.getSurvey_id ());
-            intent.putExtra (AppConfigTags.GROUP_ID, survey.getGroup_id ());
-            intent.putExtra (AppConfigTags.ASSIGNMENT_ID, survey.getAssignment_id ());
+            intent.putExtra (AppConfigTags.SURVEY_ID, String.valueOf (survey.getSurvey_id ()));
+            intent.putExtra (AppConfigTags.GROUP_ID, String.valueOf (survey.getGroup_id ()));
+            intent.putExtra (AppConfigTags.ASSIGNMENT_ID, String.valueOf (survey.getAssignment_id ()));
             intent.putExtra (AppConfigTags.SURVEY_TITLE, survey.getSurvey_title ());
             overridePendingTransition (R.anim.slide_in_right, R.anim.slide_out_left);
             startActivity (intent);
