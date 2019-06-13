@@ -1,7 +1,7 @@
 package com.resultier.crux.utils;
 
 public class AppConfigURL {
-    public static String version = "v1.0";
+    public static String version = "v1.1";
     
     //    private static String BASE_URL = "https://factory-app-cammy92.c9users.io/api_crux/" + version + "/";
 //    private static String BASE_URL = "http://52.32.254.236/api/" + version + "/";
